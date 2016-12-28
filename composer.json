@@ -1,0 +1,5 @@
+{
+    "require": {
+        "jasonlewis/resource-watcher": "^1.2"
+    }
+}
