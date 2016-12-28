@@ -41,8 +41,9 @@ class MyBB_Template {
 			'pass'=>'secret',
 			'db'=>'mybb',
 		], $db);
+		$db['host'] = str_replace('p:', '', $db['host']);
 		
-		$this->connection = new mysqli($db['host'], $db['user'], $db['pass'], $db['db']);
+		$this->connection = new mysqli('p:'.$db['host'], $db['user'], $db['pass'], $db['db']);
 		
 		if ($this->connection->connect_error) {
 			die('Connect Error (' . $this->connection->connect_errno . ') '. $this->connection->connect_error);
