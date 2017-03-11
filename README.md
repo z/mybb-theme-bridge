@@ -21,10 +21,6 @@ Dumps template files from the database to the filesystem
 
 `php tpl.php remove`
 
-Removes all the template files from the filesystem.
-
-`php tpl.php watch`
-
 Watch the template files on the filesystem and update the db on change.
 
 `php tpl.php sync`
