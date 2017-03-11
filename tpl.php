@@ -6,36 +6,38 @@ require 'vendor/autoload.php';
 require 'MyBB_Template.php';
 
 $mybb_template = new MyBB_Template([
-	'host'=>'localhost',
-	'user'=>'homestead',
-	'pass'=>'secret',
-	'db'=>'mybb',
-], 3, -2, 1809);
+	'host'=> getenv("MYSQL_HOST") ?: "localhost",
+	'user'=> getenv("MYSQL_USER") ?: "root",
+	'pass'=> getenv("MYSQL_PASSWORD") ?: "",
+	'db'=> getenv("MYSQL_DATABASE") ?: "mybb",
+], 3, -2, 1810);
 
-if(isset($argv[1])) {
-	if($argv[1] == 'store') {
-		$mybb_template->store();
-		exit;
-	}
-	if($argv[1] == 'remove') {
-		$mybb_template->remove();
-		exit;
-	}
-	if($argv[1] == 'watch') {
-		$files = new Illuminate\Filesystem\Filesystem;
-		$tracker = new JasonLewis\ResourceWatcher\Tracker;
-		$watcher = new JasonLewis\ResourceWatcher\Watcher($tracker, $files);
+if (isset($argv[1])) {
+    switch ($argv[1]) {
+        case 'dump':
+            $mybb_template->store();
+            break;
+        case 'remove':
+            $mybb_template->remove();
+            break;
+        case 'sync':
+            $mybb_template->sync_all();
+            break;
+        case 'watch':
+            $files = new Illuminate\Filesystem\Filesystem;
+            $tracker = new JasonLewis\ResourceWatcher\Tracker;
+            $watcher = new JasonLewis\ResourceWatcher\Watcher($tracker, $files);
 
-		$listener = $watcher->watch('templates');
+            $listener = $watcher->watch('templates');
 
-		$listener->modify(function($resource, $path) use($mybb_template) {
-			$mybb_template->sync($path);
-		});
+            $listener->modify(function ($resource, $path) use ($mybb_template) {
+                $mybb_template->sync($path);
+            });
 
-		$watcher->start();
-	}
+            $watcher->start();
+            break;
+        default:
+            echo "Need help?";
+    }
 }
-else {
-	$mybb_template->sync_all();
-	exit;
-}
+exit;

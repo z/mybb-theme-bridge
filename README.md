@@ -1,32 +1,36 @@
-# mybb_watch
+# mybb-theme-bridge
 
-A PHP CLI file to store all MyBB templates as PHP files and update to DB when changed
+A bidirectional filesystem to database bridge for developing MyBB 1.8 themes.  
 
-Settings
---------
-You may update the settings in the `tpl.php` file.
+## Settings
 
-     new MyBB_Template([
-		'host'=>'DB_HOST',
-		'user'=>'DB_USERNAME',
-		'pass'=>'DB_PASSWORD',
-		'db'=>'DB_NAME',
-	], TEMPLATE_ID, DEFAULT_TEMPLATE_ID, MYBB_VERSION);
+The following are configurable as Environment Variables:
 
-Usage
------
-`php tpl.php store`
+```
+MYSQL_HOST
+MYSQL_USER
+MYSQL_PASSWORD
+MYSQL_DATABASE
+```
 
-Store all the template files.
+## Usage
+
+`php tpl.php dump`
+
+Dumps template files from the database to the filesystem
 
 `php tpl.php remove`
 
-Remove all the template files.
+Removes all the template files from the filesystem.
 
 `php tpl.php watch`
 
-Watch the stored template files for changes and updates the DB.
+Watch the template files on the filesystem and update the db on change.
 
-`php tpl.php`
+`php tpl.php sync`
 
-Syncs local files onto DB.
+Updates the filesystem templates in the database.
+
+## License
+
+Unclear: https://github.com/manmohanjit1/mybb_watch/issues/2

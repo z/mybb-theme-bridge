@@ -37,8 +37,8 @@ class MyBB_Template {
 	{
 		$db = array_merge([
 			'host'=>'localhost',
-			'user'=>'homestead',
-			'pass'=>'secret',
+			'user'=>'root',
+			'pass'=>'',
 			'db'=>'mybb',
 		], $db);
 		$db['host'] = str_replace('p:', '', $db['host']);
@@ -204,10 +204,10 @@ class MyBB_Template {
 		
 		$total = 0;
 
-		exec('mkdir ./templates');
+		exec('mkdir -p ./templates');
 		
 		foreach($organized['templates'] as $group => $templates) {
-			exec('mkdir ./templates/'.$group);
+			exec('mkdir -p ./templates/'.$group);
 			
 			foreach($templates as $title => $template) {
 				$total++;
