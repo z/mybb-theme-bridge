@@ -15,17 +15,17 @@ MYSQL_DATABASE
 
 ## Usage
 
+Dump template files from the database to the filesystem:
+
 `php tpl.php dump`
 
-Dumps template files from the database to the filesystem
+Remove template files from the filesystem:
 
 `php tpl.php remove`
 
-Watch the template files on the filesystem and update the db on change.
+Push filesystem templates into the database:
 
 `php tpl.php sync`
-
-Updates the filesystem templates in the database.
 
 ## License
 
