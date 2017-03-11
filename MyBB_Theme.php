@@ -87,21 +87,20 @@ class MyBB_Theme extends BaseCLI {
     public function commitThemeStyleSheets($quiet = false)
     {
         $total = 0;
-        foreach(glob("{$this->css_path}/{$this->theme}/*", GLOB_ONLYDIR) as $folder) {
-            foreach(glob($folder.'/*.css') as $file) {
-                $total++;
-                $this->syncThemeStyleSheetFile($file, true);
-            }
+        foreach(glob("{$this->css_path}/{$this->theme}/*.css") as $file) {
+            $total++;
+            $this->syncThemeStyleSheetFile($file, true);
         }
 
         if(!$quiet) echo $this->getColoredString("[SUCCESS]", 'green').' Updated all stylesheets in DB.'.PHP_EOL;
+
+        exit;
     }
 
     public function syncThemeStyleSheetFile($path, $quiet = false)
     {
-        $name = basename($path, '.css');
+        $name = basename($path);
         $stylesheet = file_get_contents($path);
-        print('here');
 
         if(!$quiet) echo $this->getColoredString("[{$name}]", 'green')." ThemeStyleSheet changed.".PHP_EOL;
 
