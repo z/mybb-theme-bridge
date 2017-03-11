@@ -9,7 +9,7 @@ $mybb_template = new MyBB_Template([
 	'user'=> getenv("MYSQL_USER") ?: "root",
 	'pass'=> getenv("MYSQL_PASSWORD") ?: "",
 	'db'=> getenv("MYSQL_DATABASE") ?: "mybb",
-], 3, -2, 1810);
+], 2, -2, 1810);
 
 function help() {
     echo "Need help?\n";
