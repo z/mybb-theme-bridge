@@ -18,6 +18,24 @@ MYSQL_DATABASE=mybb
 
 ## Usage
 
+### CSS
+
+Dump stylesheet files from the database to the filesystem:
+
+`php mytb css_dump`
+
+List stylesheet files in the database:
+
+`php mytb css_list`
+
+Remove stylesheet files from the filesystem:
+
+`php mytb css_remove`
+
+Push filesystem stylesheets into the database:
+
+`php mytb css_commit`
+
 ### Templates
 
 Dump template files from the database to the filesystem:
@@ -30,22 +48,13 @@ Remove template files from the filesystem:
 
 Push filesystem templates into the database:
 
-`php mytb tpl_sync`
+`php mytb tpl_commit`
 
-### CSS
+### Themes
 
-Dump stylesheet files from the database to the filesystem:
+List themes in the database:
 
-`php mytb css_dump`
-
-Remove stylesheet files from the filesystem:
-
-`php mytb css_remove`
-
-TODO: Push filesystem stylesheets into the database:
-
-`php mytb css_sync`
-
+`php mytb theme_list`
 
 ## License
 

@@ -113,7 +113,7 @@ class MyBB_Template extends BaseCLI {
 		if(!$quiet) echo $this->getColoredString("[SUCCESS]", 'green').' Removed all files.'.PHP_EOL;
 	}
 	
-	public function syncTemplates($quiet = false)
+	public function commitTemplates($quiet = false)
 	{
 		$total = 0;
 		foreach(glob("{$this->template_path}/*", GLOB_ONLYDIR) as $folder) {
