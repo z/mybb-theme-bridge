@@ -1,0 +1,4 @@
+#!/usr/bin/php
+<?php
+$mytb_path = getenv("MYTB_PATH") ?: realpath(dirname(__FILE__));
+require $mytb_path . '/main.php';

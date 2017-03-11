@@ -1,48 +1,12 @@
 <?php
 
-class MyBB_Template {
+
+class MyBB_Template extends BaseCLI {
 	
-	protected $connection, $sid, $default_sid, $version;
-	
-	protected $backgroundColors = [
-		'black' => '40',
-		'red' => '41',
-		'green' => '42',
-		'yellow' => '43',
-		'blue' => '44',
-		'magenta' => '45',
-		'cyan' => '46',
-		'light_gray' => '47',
-	];
-	protected $foregroundColors = [
-        'black' => '0;30',
-        'dark_gray' => '1;30',
-        'blue' => '0;34',
-        'light_blue' => '1;34',
-        'green' => '0;32',
-        'light_green' => '1;32',
-        'cyan' => '0;36',
-        'light_cyan' => '1;36',
-        'red' => '0;31',
-        'light_red' => '1;31',
-        'purple' => '0;35',
-        'light_purple' => '1;35',
-        'brown' => '0;33',
-        'yellow' => '1;33',
-        'light_gray' => '0;37',
-        'white' => '1;37',
-	];
-	
+	protected $sid, $default_sid, $version, $template_path;
+
 	public function __construct(array $db, $sid = 2, $default_sid = -2, $version = 1809)
 	{
-		$db = array_merge([
-			'host'=>'localhost',
-			'user'=>'root',
-			'pass'=>'',
-			'db'=>'mybb',
-		], $db);
-		$db['host'] = str_replace('p:', '', $db['host']);
-		
 		$this->connection = new mysqli('p:'.$db['host'], $db['user'], $db['pass'], $db['db']);
 		
 		if ($this->connection->connect_error) {
@@ -52,6 +16,7 @@ class MyBB_Template {
 		$this->sid = $sid;
 		$this->default_sid = $default_sid;
 		$this->version = $version;
+		$this->template_path = getenv("TEMPLATE_PATH") ?: './templates';
 	}
 	
 	public function setID($sid, $default_sid = null)
@@ -62,25 +27,20 @@ class MyBB_Template {
 		}
 	}
 	
-	public function setVersion($v)
-	{
-		$this->version = $v;
-	}
-	
 	public function dumpTemplates($quiet = false)
 	{
-		$organized = $this->organize();
+		$organized = $this->organizeTemplates();
 
 		$total = 0;
 
-		exec('mkdir -p ./templates');
+		exec("mkdir -p {$this->template_path}");
 
 		foreach($organized['templates'] as $group => $templates) {
-			exec('mkdir -p ./templates/'.$group);
+			exec("mkdir -p {$this->template_path}".$group);
 
 			foreach($templates as $title => $template) {
 				$total++;
-				file_put_contents('templates/'.$group.'/'.$title.'.php', $template);
+				file_put_contents($this->template_path.'/'.$group.'/'.$title.'.php', $template);
 			}
 		}
 
@@ -89,7 +49,7 @@ class MyBB_Template {
 		if(!$quiet) echo $this->getColoredString("[SUCCESS]", 'green')." Added a total of {$total} ({$total_theme}) files in {$total_groups} groups.".PHP_EOL;
 	}
 	
-	public function organize()
+	public function organizeTemplates()
 	{
 		$groups = $this->getTemplateGroups();
 
@@ -99,10 +59,10 @@ class MyBB_Template {
 		$templates = [];
 
 		foreach($default as $tpl) {
-			$templates[ $this->findGroup($tpl['title'], $groups) ][ $tpl['title'] ] = $tpl['template'];
+			$templates[ $this->findTemplateGroup($tpl['title'], $groups) ][ $tpl['title'] ] = $tpl['template'];
 		}
 		foreach($theme as $tpl) {
-			$templates[ $this->findGroup($tpl['title'], $groups) ][ $tpl['title'] ] = $tpl['template'];
+			$templates[ $this->findTemplateGroup($tpl['title'], $groups) ][ $tpl['title'] ] = $tpl['template'];
 		}
 
 		return ['templates'=>$templates, 'default'=>$default, 'theme'=>$theme, 'groups'=>$groups];
@@ -132,7 +92,7 @@ class MyBB_Template {
 		return $templates;
 	}
 	
-	protected function findGroup($title, $groups)
+	protected function findTemplateGroup($title, $groups)
 	{
 		$result = "ungrouped";
 
@@ -146,25 +106,9 @@ class MyBB_Template {
 		return $result;
 	}
 	
-	public function getColoredString($string, $foregroundColor = null, $backgroundColor = null)
-	{
-		$colored_string = "";
-
-		if (isset($this->foregroundColors[$foregroundColor])) {
-			$colored_string .= "\033[" . $this->foregroundColors[$foregroundColor] . "m";
-		}
-		if (isset($this->backgroundColors[$backgroundColor])) {
-			$colored_string .= "\033[" . $this->backgroundColors[$backgroundColor] . "m";
-		}
-
-		$colored_string .=  $string . "\033[0m";
-
-		return $colored_string;
-	}
-	
 	public function removeTemplates($quiet = false)
 	{
-		exec('rm -rf ./templates');
+		exec("rm -rf {$this->template_path}");
 
 		if(!$quiet) echo $this->getColoredString("[SUCCESS]", 'green').' Removed all files.'.PHP_EOL;
 	}
@@ -172,7 +116,7 @@ class MyBB_Template {
 	public function syncTemplates($quiet = false)
 	{
 		$total = 0;
-		foreach(glob('templates/*', GLOB_ONLYDIR) as $folder) {
+		foreach(glob("{$this->template_path}/*", GLOB_ONLYDIR) as $folder) {
 			foreach(glob($folder.'/*.php') as $file) {
 				$total++;
 				$this->sync($file, true);
@@ -212,7 +156,7 @@ class MyBB_Template {
 	public function hasTemplates($title)
 	{
 		$stmt = $this->connection->prepare("SELECT COUNT(*) AS total FROM mybb_templates WHERE sid = ? AND title = ?");
-		$this->check();
+		$this->checkConnection();
 
 		$stmt->bind_param('ds', $this->sid, $title);
 		$result = $stmt->execute();
@@ -225,37 +169,25 @@ class MyBB_Template {
 		return $result && $total > 0;
 	}
 	
-	public function check()
-	{
-		if ($this->connection->connect_error) {
-			die('Connect Error (' . $this->connection->connect_errno . ') '. $this->connection->connect_error);
-		}
-	}
-	
 	public function updateTemplates($title, $template)
 	{
 		$time = time();
 
 		$stmt = $this->connection->prepare("UPDATE mybb_templates SET template = ?, dateline = ? WHERE title = ? AND sid = ?");
-		$this->check();
+		$this->checkConnection();
 
 		$stmt->bind_param('sdsd', $template, $time, $title, $this->sid);
 		$result = $stmt->execute();
 
 		return $result ? $this->connection->affected_rows : false;
 	}
-	
-	/*
-	  Source:
-	  https://www.if-not-true-then-false.com/2010/php-class-for-coloring-php-command-line-cli-scripts-output-php-output-colorizing-using-bash-shell-colors/
-	*/
 
 	public function insertTemplates($title, $template)
 	{
 		$time = time();
 
 		$stmt = $this->connection->prepare("INSERT INTO mybb_templates (title, sid, template, version, dateline) VALUES (?, ?, ?, ?, ?)");
-		$this->check();
+		$this->checkConnection();
 
 		$stmt->bind_param('sdsdd', $title, $this->sid, $template, $this->version, $time);
 		$result = $stmt->execute();

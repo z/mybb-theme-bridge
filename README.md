@@ -7,6 +7,8 @@ A bidirectional filesystem to database bridge for developing MyBB 1.8 themes.
 The following are configurable as Environment Variables:
 
 ```
+TEMPLATE_PATH
+MYTB_PATH
 MYSQL_HOST
 MYSQL_USER
 MYSQL_PASSWORD
@@ -17,15 +19,15 @@ MYSQL_DATABASE
 
 Dump template files from the database to the filesystem:
 
-`php tpl.php dump`
+`php mytb dump`
 
 Remove template files from the filesystem:
 
-`php tpl.php remove`
+`php mytb remove`
 
 Push filesystem templates into the database:
 
-`php tpl.php sync`
+`php mytb sync`
 
 ## License
 
