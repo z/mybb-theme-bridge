@@ -3,7 +3,7 @@
 
 class MyBB_Theme extends BaseCLI {
 
-    protected $tid, $default_tid, $version;
+    protected $tid, $default_tid, $version, $css_path;
 
     public function __construct(array $db, $tid = 2, $default_tid = -2, $version = 1809)
     {
@@ -16,6 +16,7 @@ class MyBB_Theme extends BaseCLI {
         $this->tid = $tid;
         $this->default_tid = $default_tid;
         $this->version = $version;
+        $this->css_path = getenv("CSS_PATH") ?: './themes';
     }
 
     public function getThemes()
@@ -56,4 +57,21 @@ class MyBB_Theme extends BaseCLI {
         }
     }
 
+    public function dumpThemeStyleSheets($quiet = false)
+    {
+        $stylesheets = $this->getThemeStyleSheets($this->tid);
+
+        $total = 0;
+        $theme = "revoxono";
+
+        exec("mkdir -p {$this->css_path}/$theme");
+
+        foreach($stylesheets as $stylesheet => $data) {
+            $total++;
+            file_put_contents($this->css_path.'/'.$theme.'/'.$stylesheet, $data['stylesheet']);
+        }
+        
+        if(!$quiet) echo $this->getColoredString("[SUCCESS]", 'green')." Dumped a total of {$total}.".PHP_EOL;
+    }
+    
 }

@@ -119,7 +119,7 @@ class MyBB_Template extends BaseCLI {
 		foreach(glob("{$this->template_path}/*", GLOB_ONLYDIR) as $folder) {
 			foreach(glob($folder.'/*.php') as $file) {
 				$total++;
-				$this->sync($file, true);
+				$this->syncTemplateFile($file, true);
 			}
 		}
 
@@ -128,7 +128,7 @@ class MyBB_Template extends BaseCLI {
 		exit;
 	}
 	
-	public function sync($path, $quiet = false)
+	public function syncTemplateFile($path, $quiet = false)
 	{
 		$title = basename($path, '.php');
 		$template = file_get_contents($path);

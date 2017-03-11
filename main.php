@@ -24,19 +24,22 @@ function help() {
 
 if (isset($argv[1])) {
     switch ($argv[1]) {
-        case 'dump':
-            $mybb_template->dumpTemplates();
-            break;
-        case 'list':
-            $mybb_theme->listThemes();
-            break;
-        case 'listcss':
+        case 'css_list':
             $mybb_theme->listThemeStyleSheets();
             break;
-        case 'remove':
+        case 'css_dump':
+            $mybb_theme->dumpThemeStyleSheets();
+            break;
+        case 'theme_list':
+            $mybb_theme->listThemes();
+            break;
+        case 'tpl_dump':
+            $mybb_template->dumpTemplates();
+            break;
+        case 'tpl_remove':
             $mybb_template->removeTemplates();
             break;
-        case 'sync':
+        case 'tpl_sync':
             $mybb_template->syncTemplates();
             break;
         default:
