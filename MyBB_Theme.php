@@ -148,6 +148,12 @@ class MyBB_Theme extends BaseCLI {
         $stmt->bind_param('sdsd', $content, $time, $name, $this->tid);
         $result = $stmt->execute();
 
+        $stylesheets = $this->getThemeStyleSheets($this->tid);
+
+        foreach($stylesheets as $stylesheet) {
+            copy("{$this->css_path}/{$this->theme}/{$stylesheet['name']}", "cache/themes/theme{$stylesheet['tid']}/{$stylesheet['name']}");
+        }
+
         return $result ? $this->connection->affected_rows : false;
     }
 
@@ -160,6 +166,12 @@ class MyBB_Theme extends BaseCLI {
 
         $stmt->bind_param('sdsd', $name, $this->tid, $content, $time);
         $result = $stmt->execute();
+
+        $stylesheets = $this->getThemeStyleSheets($this->tid);
+
+        foreach($stylesheets as $stylesheet) {
+            copy("{$this->css_path}/{$this->theme}/{$stylesheet['name']}", "cache/themes/theme{$stylesheet['tid']}/{$stylesheet['name']}");
+        }
 
         return $result ? $this->connection->affected_rows : false;
     }
