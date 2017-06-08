@@ -58,4 +58,4 @@ List themes in the database:
 
 ## License
 
-Unclear: https://github.com/manmohanjit1/mybb_watch/issues/2
+Licensed under MIT
